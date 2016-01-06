@@ -2,6 +2,7 @@ package com.alex.googlenewsreader;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
@@ -59,9 +60,18 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < array.length(); i++) {
             // On récupère un objet JSON du tableau
                 JSONObject obj = new JSONObject(array.getString(i));
+
+                // on instancie la classe news
                 News news = new News();
+
+                // on set le titre
                 news.setTitle(obj.getString("title"));
-                actu[i] = news.getTitle();
+                actu[i] = String.valueOf(Html.fromHtml(news.getTitle()+"<br>"+obj.getString("content")+"</br>"));
+
+                // on set l'url
+                String urlDecoded = java.net.URLDecoder.decode(obj.getString("url"), "UTF-8");
+                news.setUrl(urlDecoded);
+
             }
 
 
@@ -75,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        ArrayAdapter<String> arrayActu = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, actu);
+        ArrayAdapter<String> arrayActu = new ArrayAdapter<String>(this, R.layout.mynewstextview, actu);
         lv.setAdapter(arrayActu);
     }
 
