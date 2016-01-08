@@ -1,5 +1,6 @@
 package com.alex.googlenewsreader;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -19,25 +20,40 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+SwipeRefreshLayout mSwipeRefreshLayout;
+    String[] actu = null;
+    ArrayAdapter<String> arrayActu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pougeaxCeGenie("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=barack%20obama");
+    }
+
+    @Override
+    public void onRefresh(){
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                pougeaxCeGenie("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=clara%20morgane");
+            }
+        }, 2000);
+    }
+
+    public void pougeaxCeGenie(String myurl){
         setContentView(R.layout.activity_main);
 
         ListView lv = (ListView)findViewById(R.id.listView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(this); //listener sur le pull to refresh (onRefresh)
 
-        String myurl= "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=barack%20obama";
-        String[] actu = null;
-        URL url = null;
         try {
-            url = new URL(myurl);
+            URL url = new URL(myurl);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
             InputStream inputStream = connection.getInputStream();
-
 
             final StringBuilder out = new StringBuilder();
             final byte[] buffer = new byte[1024];
@@ -54,11 +70,11 @@ public class MainActivity extends AppCompatActivity {
             // On récupère le tableau d'objets qui nous concernent
             jsonObject = new JSONObject(jsonObject.getString("responseData"));
             JSONArray array = new JSONArray(jsonObject.getString("results"));
-            
+
             actu = new String[array.length()];
             // Pour tous les objets on récupère les infos
             for (int i = 0; i < array.length(); i++) {
-            // On récupère un objet JSON du tableau
+                // On récupère un objet JSON du tableau
                 JSONObject obj = new JSONObject(array.getString(i));
 
                 // on instancie la classe news
@@ -76,14 +92,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         } catch (MalformedURLException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }catch (JSONException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
         ArrayAdapter<String> arrayActu = new ArrayAdapter<String>(this, R.layout.mynewstextview, actu);
         lv.setAdapter(arrayActu);
