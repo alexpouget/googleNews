@@ -7,8 +7,10 @@ import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +30,18 @@ SwipeRefreshLayout mSwipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pougeaxCeGenie("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=barack%20obama");
+        newsList("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=barack%20obama");
+        Button search_button = (Button)findViewById(R.id.search_button);
+        search_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+              log();
+
+            }
+        });
+    }
+
+    public void log(){
+        Toast.makeText(this,"suce fdp", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -36,12 +49,12 @@ SwipeRefreshLayout mSwipeRefreshLayout;
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                pougeaxCeGenie("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=clara%20morgane");
+                newsList("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=Le%20Pecq%2078230");
             }
         }, 2000);
     }
 
-    public void pougeaxCeGenie(String myurl){
+    public void newsList(String myurl){
         setContentView(R.layout.activity_main);
 
         ListView lv = (ListView)findViewById(R.id.listView);
