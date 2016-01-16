@@ -7,6 +7,7 @@ public class News {
     String title;
     String url;
     String snippet;
+    String Image;
 
     public News() {
     }
@@ -39,5 +40,13 @@ public class News {
 
     public void setSnippet(String snippet) {
         this.snippet = snippet;
+    }
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        Image = image;
     }
 }

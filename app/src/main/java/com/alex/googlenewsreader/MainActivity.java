@@ -4,11 +4,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.View;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,16 +16,17 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 SwipeRefreshLayout mSwipeRefreshLayout;
-    String[] actu = null;
+    ArrayList<News> actu = null;
     ArrayAdapter<String> arrayActu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pougeaxCeGenie("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=barack%20obama");
+        LoadNews("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=barack%20obama");
     }
 
     @Override
@@ -36,15 +34,16 @@ SwipeRefreshLayout mSwipeRefreshLayout;
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                pougeaxCeGenie("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=clara%20morgane");
+                LoadNews("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=clara%20morgane");
             }
         }, 2000);
     }
 
-    public void pougeaxCeGenie(String myurl){
+    public void LoadNews(String myurl){
         setContentView(R.layout.activity_main);
 
         ListView lv = (ListView)findViewById(R.id.listView);
+        lv.setOnItemClickListener(new MyOnItemClickListener());
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this); //listener sur le pull to refresh (onRefresh)
 
@@ -71,7 +70,7 @@ SwipeRefreshLayout mSwipeRefreshLayout;
             jsonObject = new JSONObject(jsonObject.getString("responseData"));
             JSONArray array = new JSONArray(jsonObject.getString("results"));
 
-            actu = new String[array.length()];
+            actu = new ArrayList<News>();
             // Pour tous les objets on récupère les infos
             for (int i = 0; i < array.length(); i++) {
                 // On récupère un objet JSON du tableau
@@ -82,11 +81,13 @@ SwipeRefreshLayout mSwipeRefreshLayout;
 
                 // on set le titre
                 news.setTitle(obj.getString("title"));
-                actu[i] = String.valueOf(Html.fromHtml(news.getTitle()+"<br>"+obj.getString("content")+"</br>"));
-
-                // on set l'url
+                //actu[i] = String.valueOf(Html.fromHtml(news.getTitle()+"<br>"+obj.getString("content")+"</br>"));
+                news.setSnippet(String.valueOf(Html.fromHtml(news.getTitle() + "<br>" + obj.getString("content") + "</br>")));
                 String urlDecoded = java.net.URLDecoder.decode(obj.getString("url"), "UTF-8");
                 news.setUrl(urlDecoded);
+                JSONObject obj_image = new JSONObject(obj.getString("image"));
+                news.setImage(obj_image.getString("url"));
+                actu.add(news);
 
             }
 
@@ -99,12 +100,9 @@ SwipeRefreshLayout mSwipeRefreshLayout;
             e.printStackTrace();
         }
 
-        ArrayAdapter<String> arrayActu = new ArrayAdapter<String>(this, R.layout.mynewstextview, actu);
+        MyAdapter arrayActu = new MyAdapter(this, actu);
         lv.setAdapter(arrayActu);
     }
 
-    /*@Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        // Do something when a list item is clicked
-    }*/
+
 }
