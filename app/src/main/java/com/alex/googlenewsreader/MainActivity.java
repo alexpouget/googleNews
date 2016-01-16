@@ -4,7 +4,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -27,7 +29,15 @@ SwipeRefreshLayout mSwipeRefreshLayout;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LoadNews("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=barack%20obama");
+        Button search_button = (Button)findViewById(R.id.search_button);
+        search_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+              //log();
+
+            }
+        });
     }
+
 
     @Override
     public void onRefresh(){
@@ -39,7 +49,9 @@ SwipeRefreshLayout mSwipeRefreshLayout;
         }, 2000);
     }
 
+
     public void LoadNews(String myurl){
+
         setContentView(R.layout.activity_main);
 
         ListView lv = (ListView)findViewById(R.id.listView);
