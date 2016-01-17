@@ -3,6 +3,9 @@ package com.alex.googlenewsreader;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class NewsReader extends AppCompatActivity {
@@ -12,8 +15,22 @@ public class NewsReader extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_reader);
 
-        TextView tv = (TextView)findViewById(R.id.textView2);
+        WebView webview = (WebView)findViewById(R.id.webView);
+
         Intent intent = getIntent();
-        tv.setText(intent.getStringExtra("url"));
+
+        webview.loadUrl(intent.getStringExtra("url"));
+
+        Button retour = (Button)findViewById(R.id.retour);
+        
+        retour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent r_intent = new Intent(v.getContext(), MainActivity.class);
+                startActivity(r_intent);
+            }
+        });
+
+
     }
 }
