@@ -46,6 +46,7 @@ SwipeRefreshLayout mSwipeRefreshLayout;
             LoadNews("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q="+activeTag);
         }else{
             System.out.println("non connecter");
+            getAllNews();
         }
 
         Button search_button = (Button)findViewById(R.id.search_button);
