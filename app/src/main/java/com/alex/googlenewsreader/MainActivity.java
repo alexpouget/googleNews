@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.StrictMode;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,27 +34,38 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 SwipeRefreshLayout mSwipeRefreshLayout;
     ArrayList<News> actu = null;
     SQLiteDatabase db;
-    String activeTag = "barack%20obama";
+    static Boolean co = false;
+    String activeTag = "google";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         initDB();
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if(networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
+            co=true;
             LoadNews("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q="+activeTag);
         }else{
+            ListView lv = (ListView)findViewById(R.id.listView);
+            co=false;
             System.out.println("non connecter");
+            actu = new ArrayList<News>();
             getAllNews();
+            MyAdapter arrayActu = new MyAdapter(this, actu);
+            lv.setAdapter(arrayActu);
         }
 
         Button search_button = (Button)findViewById(R.id.search_button);
         search_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
               //log();
-
             }
         });
     }
@@ -73,7 +85,6 @@ SwipeRefreshLayout mSwipeRefreshLayout;
 
     public void LoadNews(String myurl){
 
-        setContentView(R.layout.activity_main);
 
         ListView lv = (ListView)findViewById(R.id.listView);
         lv.setOnItemClickListener(new MyOnItemClickListener());
@@ -221,15 +232,17 @@ SwipeRefreshLayout mSwipeRefreshLayout;
 
             Cursor cursor = db.query(DataBaseHelper.DB_TABLE_NAME,null,null,null,null,null,null);
             while(cursor.moveToNext()){
-                News news = new News();
-                long id = cursor.getLong(0);
-
-                news.setTitle(cursor.getString(1));
-                news.setSnippet(String.valueOf(Html.fromHtml(news.getTitle() + "<br>" + cursor.getString(4) + "</br>")));
-                news.setUrl(cursor.getString(2));
-                news.setImage(cursor.getString(3));
-                System.out.println(" ligne : "+cursor.getString(1)+"active : "+cursor.getString(6)+" tag : "+cursor.getString(5));
                 if(cursor.getInt(6)==1 && cursor.getString(5).equals(activeTag)) {
+                    News news = new News();
+                    long id = cursor.getLong(0);
+                    news.setId(id);
+                    news.setTitle(cursor.getString(1));
+                    news.setSnippet(String.valueOf(Html.fromHtml(news.getTitle() + "<br>" + cursor.getString(4) + "</br>")));
+                    news.setUrl(cursor.getString(2));
+                    if(co==true) {
+                        news.setImage(cursor.getString(3));
+                    }
+                    System.out.println(" ligne : " + cursor.getString(1) + "active : " + cursor.getString(6) + " tag : " + cursor.getString(5));
                     actu.add(news);
                 }
             }

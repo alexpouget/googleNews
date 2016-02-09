@@ -4,6 +4,7 @@ package com.alex.googlenewsreader;
  * Created by alex on 27/12/2015.
  */
 public class News {
+    long id;
     String title;
     String url;
     String snippet;
@@ -16,6 +17,14 @@ public class News {
         this.title = title;
         this.url = url;
         this.snippet = snippet;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() {
