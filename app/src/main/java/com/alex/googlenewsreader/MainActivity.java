@@ -1,6 +1,8 @@
 package com.alex.googlenewsreader;
 
 import android.content.ContentValues;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -17,7 +19,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.alex.googlenewsreader.Notifications.MyReceiver;
+import com.alex.googlenewsreader.asyncTask.BackTask;
 import com.alex.googlenewsreader.bdd.DataBaseHelper;
+import com.alex.googlenewsreader.bdd.Database;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,9 +38,10 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 SwipeRefreshLayout mSwipeRefreshLayout;
     ArrayList<News> actu = null;
-    SQLiteDatabase db;
-    static Boolean co = false;
-    String activeTag = "google";
+    public static Database dbi;
+    public static Boolean co = false;
+    public static String activeTag = "google";
+    MyReceiver myReceiver = new MyReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +51,11 @@ SwipeRefreshLayout mSwipeRefreshLayout;
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        initDB();
+        registerReceiver(myReceiver, new IntentFilter("N3W5"));
+        dbi = new Database(this);
+        BackTask backTask = new BackTask(this,dbi);
+        backTask.execute();
+
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -66,6 +76,16 @@ SwipeRefreshLayout mSwipeRefreshLayout;
         search_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
               //log();
+            }
+        });
+
+        Button settings_button = (Button) findViewById(R.id.settings_button);
+        settings_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(MainActivity.this, ParametersActivity.class);
+                //intent.putExtra("db",dbi);
+                startActivity(intent);
             }
         });
     }
@@ -132,9 +152,9 @@ SwipeRefreshLayout mSwipeRefreshLayout;
                 //news.setUrl(urlDecoded);
                 if(!obj.isNull("image")) {
                     JSONObject obj_image = new JSONObject(obj.getString("image"));
-                    insertOrUpdate(obj.getString("title"), urlDecoded, obj_image.getString("url"), obj.getString("content"));
+                    dbi.insertOrUpdate(obj.getString("title"), urlDecoded, obj_image.getString("url"), obj.getString("content"));
                 }else{
-                    insertOrUpdate(obj.getString("title"), urlDecoded, null, obj.getString("content"));
+                    dbi.insertOrUpdate(obj.getString("title"), urlDecoded, null, obj.getString("content"));
                 }
 
             }
@@ -153,101 +173,31 @@ SwipeRefreshLayout mSwipeRefreshLayout;
         lv.setAdapter(arrayActu);
     }
 
-    //bdd
-    private void initDB() {
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this,DataBaseHelper.DB_NAME,null,DataBaseHelper.DB_VERSION);
-        try {
-            db = dataBaseHelper.getWritableDatabase();
-        }catch(SQLiteException e){
-            db = openOrCreateDatabase(DataBaseHelper.DB_NAME,MODE_PRIVATE,null);
-        }
-    }
-
-    private void insert(String title,String url,String image,String snippet){
-        if(db!=null){
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(DataBaseHelper.FIELD[0], title);
-            contentValues.put(DataBaseHelper.FIELD[1], url);
-            contentValues.put(DataBaseHelper.FIELD[2], image);
-            contentValues.put(DataBaseHelper.FIELD[3], snippet);
-            contentValues.put(DataBaseHelper.FIELD[4], activeTag);
-            contentValues.put(DataBaseHelper.FIELD[5], 1);
-            long id = db.insert(DataBaseHelper.DB_TABLE_NAME,null,contentValues);
-            Toast.makeText(MainActivity.this, "Inserted in DB = " + id, Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void insertOrUpdate(String title,String url,String image,String snippet){
-        if(db!=null){
-            String whereClause = DataBaseHelper.FIELD[0]+" = ?";
-            String[] whereArgs = {title};
-            Cursor cursor =  db.query(DataBaseHelper.DB_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
-            if(cursor.moveToNext()){
-                //cursor.moveToNext();
-            //if(cursor != null && cursor.getCount()>0 && cursor.getPosition()>=0){
-                System.out.println("update " + cursor.getLong(0));
-                update((int)cursor.getLong(0), title, url,image,snippet);
-            }else{
-                insert(title, url, image, snippet);
-            }
-        }
-    }
 
 
-    private void update(String title,String url,String image,String snippet){
-        if(db!=null){
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(DataBaseHelper.FIELD[0], title);
-            contentValues.put(DataBaseHelper.FIELD[1], url);
-            contentValues.put(DataBaseHelper.FIELD[2], image);
-            contentValues.put(DataBaseHelper.FIELD[3], snippet);
-            contentValues.put(DataBaseHelper.FIELD[4], activeTag);
-            long nbRows = db.update(DataBaseHelper.DB_TABLE_NAME, contentValues, " _id = ? ", new String[]{"1"});
-            Toast.makeText(MainActivity.this, "update " + nbRows, Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void update(int id,String title,String url,String image,String snippet){
-        if(db!=null){
-            ContentValues contentValues = new ContentValues();
-            String[] _id = {Integer.toString(id)};
-            contentValues.put(DataBaseHelper.FIELD[0], title);
-            contentValues.put(DataBaseHelper.FIELD[1], url);
-            contentValues.put(DataBaseHelper.FIELD[2], image);
-            contentValues.put(DataBaseHelper.FIELD[3], snippet);
-            contentValues.put(DataBaseHelper.FIELD[4], activeTag);
-            long nbRows = db.update(DataBaseHelper.DB_TABLE_NAME, contentValues, " _id = ? ", _id);
-            Toast.makeText(MainActivity.this, "update " + nbRows, Toast.LENGTH_SHORT).show();
-        }
-    }
 
 
-    private void deleteAll(){
-        if (db != null) {
-            long nbRows = db.delete(DataBaseHelper.DB_TABLE_NAME,null,null);
-            Toast.makeText(MainActivity.this, "delete "+nbRows, Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
     private void getAllNews(){
-        if(db!=null){
-
-            Cursor cursor = db.query(DataBaseHelper.DB_TABLE_NAME,null,null,null,null,null,null);
-            while(cursor.moveToNext()){
-                if(cursor.getInt(6)==1 && cursor.getString(5).equals(activeTag)) {
-                    News news = new News();
-                    long id = cursor.getLong(0);
-                    news.setId(id);
-                    news.setTitle(cursor.getString(1));
-                    news.setSnippet(String.valueOf(Html.fromHtml(news.getTitle() + "<br>" + cursor.getString(4) + "</br>")));
-                    news.setUrl(cursor.getString(2));
-                    if(co==true) {
-                        news.setImage(cursor.getString(3));
-                    }
-                    System.out.println(" ligne : " + cursor.getString(1) + "active : " + cursor.getString(6) + " tag : " + cursor.getString(5));
-                    actu.add(news);
+        Cursor cursor = dbi.getAllNews();
+        while(cursor.moveToNext()){
+            if(cursor.getInt(6)==1 && cursor.getString(5).equals(activeTag)) {
+                News news = new News();
+                long id = cursor.getLong(0);
+                news.setId(id);
+                news.setTitle(cursor.getString(1));
+                news.setSnippet(String.valueOf(Html.fromHtml(news.getTitle() + "<br>" + cursor.getString(4) + "</br>")));
+                news.setUrl(cursor.getString(2));
+                if(co==true) {
+                    news.setImage(cursor.getString(3));
                 }
+                System.out.println(" ligne : " + cursor.getString(1) + "active : " + cursor.getString(6) + " tag : " + cursor.getString(5));
+                actu.add(news);
             }
-
         }
+
     }
+
 
 }

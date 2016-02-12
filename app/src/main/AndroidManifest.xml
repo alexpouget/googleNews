@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".NewsReader" >
         </activity>
+        <activity android:name=".ParametersActivity" >
+        </activity>
     </application>
 
 </manifest>
