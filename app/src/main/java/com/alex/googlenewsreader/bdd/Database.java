@@ -144,4 +144,27 @@ public class Database implements Serializable {
         }
         return cursor.getCount();
     }
+
+    public int getNbNewsActivated(){
+
+        Cursor cursor = null;
+        String whereClause = DataBaseHelper.FIELD[5]+" = 1";
+        if(db!=null) {
+            cursor = db.query(DataBaseHelper.DB_TABLE_NAME, null, whereClause, null, null, null, null);
+            cursor.moveToNext();
+
+        }
+        return cursor.getCount();
+    }
+
+    public long reactivateAllNews() {
+        long nbRows =0l;
+        if (db != null) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DataBaseHelper.FIELD[5], 1);
+            nbRows = db.update(DataBaseHelper.DB_TABLE_NAME, contentValues, null, null);
+            return nbRows;
+        }
+        return nbRows;
+    }
 }

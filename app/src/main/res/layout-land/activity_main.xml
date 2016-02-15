@@ -14,14 +14,15 @@
         android:id="@+id/textView"
         android:visibility="visible"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/editText"
-        android:layout_toEndOf="@+id/editText"
-        android:layout_marginLeft="69dp"
-        android:layout_marginStart="69dp" />
+        android:layout_alignRight="@+id/search_button"
+        android:layout_alignEnd="@+id/swipeRefreshLayout"
+        android:layout_marginRight="89dp"
+        android:layout_marginEnd="89dp"
+        android:layout_alignBaseline="@+id/editText" />
 
     <Button
-        android:layout_width="40px"
-        android:layout_height="40px"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:background="@drawable/icon_search"
 
         android:id="@+id/search_button"
@@ -34,8 +35,8 @@
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="40px"
-        android:layout_height="40px"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
 
         android:background="@drawable/icon_settings"
         android:id="@+id/settings_button"
@@ -56,12 +57,14 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
-        android:text="Recherche"
+        android:hint="Recherche"
+        android:singleLine="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="75dp"
-        android:layout_marginStart="75dp" />
+        android:layout_marginStart="75dp"
+        android:visibility="gone"/>
 
     <ListView
         android:layout_width="match_parent"
@@ -69,8 +72,9 @@
         android:id="@+id/listView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="false"
-        android:layout_below="@+id/editText"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="10dp" />
 
 </RelativeLayout>

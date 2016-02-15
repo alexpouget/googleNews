@@ -35,6 +35,25 @@ public class ParametersActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        reactivate_news.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ParametersActivity.this, MainActivity.class);
+
+                // Nb de news activées avant réactivation
+                System.out.println("Nb news avant reactivation: "+MainActivity.dbi.getNbNewsActivated());
+
+                // Réaction de toutes les news de la bdd
+                MainActivity.dbi.reactivateAllNews();
+
+                // Nb de news activées apres réactivation
+                System.out.println("Nb news apres reactivation: " + MainActivity.dbi.getNbNewsActivated());
+
+                // on relance la main activity
+                startActivity(intent);
+            }
+        });
     }
 
 

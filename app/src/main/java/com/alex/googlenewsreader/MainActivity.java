@@ -1,5 +1,6 @@
 package com.alex.googlenewsreader;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,9 +14,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -73,9 +77,24 @@ SwipeRefreshLayout mSwipeRefreshLayout;
         }
 
         Button search_button = (Button)findViewById(R.id.search_button);
+
+
         search_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-              //log();
+                final EditText recherche = (EditText)findViewById(R.id.editText);
+                recherche.setVisibility(View.VISIBLE);
+                recherche.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        if(keyCode == KeyEvent.KEYCODE_ENTER)
+                        {
+                            activeTag = String.valueOf(recherche.getText());
+                            recherche.setVisibility(View.GONE);
+                            hideSoftKeyboard(MainActivity.this);
+                        }
+                        return false;
+                    }
+                });
             }
         });
 
@@ -90,6 +109,10 @@ SwipeRefreshLayout mSwipeRefreshLayout;
         });
     }
 
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
 
     @Override
     public void onRefresh(){
@@ -186,7 +209,7 @@ SwipeRefreshLayout mSwipeRefreshLayout;
                 News news = new News();
                 long id = cursor.getLong(0);
                 news.setId(id);
-                news.setTitle(cursor.getString(1));
+                news.setTitle(String.valueOf(Html.fromHtml(cursor.getString(1))));
                 news.setSnippet(String.valueOf(Html.fromHtml(news.getTitle() + "<br>" + cursor.getString(4) + "</br>")));
                 news.setUrl(cursor.getString(2));
                 if(co==true) {
