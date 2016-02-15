@@ -42,13 +42,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/textView">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
 
     <EditText
         android:layout_width="140dp"
@@ -59,6 +53,11 @@
         android:layout_alignBaseline="@+id/textView"
         android:layout_toRightOf="@+id/textView"
         android:visibility="gone"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView">
 
     <ListView
         android:layout_width="match_parent"
@@ -66,5 +65,6 @@
         android:id="@+id/listView"
         android:layout_marginTop="50dp" />
 
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

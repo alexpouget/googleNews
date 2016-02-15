@@ -39,13 +39,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class
+        MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 SwipeRefreshLayout mSwipeRefreshLayout;
     ArrayList<News> actu = null;
     public static Database dbi;
     public static Boolean co = false;
     public static String activeTag = "google";
     MyReceiver myReceiver = new MyReceiver();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +123,7 @@ SwipeRefreshLayout mSwipeRefreshLayout;
             @Override
             public void run() {
                 LoadNews("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + activeTag);
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 2000);
     }
