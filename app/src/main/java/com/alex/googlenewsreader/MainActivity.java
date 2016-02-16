@@ -134,6 +134,7 @@ SwipeRefreshLayout mSwipeRefreshLayout;
 
         ListView lv = (ListView)findViewById(R.id.listView);
         lv.setOnItemClickListener(new MyOnItemClickListener());
+        lv.setOnItemLongClickListener(new MyOnItemClickListener());
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(this); //listener sur le pull to refresh (onRefresh)
 

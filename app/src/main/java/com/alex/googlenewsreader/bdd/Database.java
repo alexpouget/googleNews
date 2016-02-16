@@ -106,6 +106,18 @@ public class Database implements Serializable {
         }
     }
 
+    public void deactivate(long id){
+        System.out.println("uiuisisi" + id);
+        if(db!=null){
+            ContentValues contentValues = new ContentValues();
+            String[] _id = {Long.toString(id)};
+            contentValues.put(DataBaseHelper.FIELD[5], 0);
+            long nbRows = db.update(DataBaseHelper.DB_TABLE_NAME, contentValues, " _id = ? ", _id);
+            Toast.makeText(null, "update " + nbRows, Toast.LENGTH_SHORT).show();
+            System.out.println("suuuuuuuuuuuuuuuuuuuuuuce");
+        }
+    }
+
     public void deleteAll(){
         if (db != null) {
             long nbRows = db.delete(DataBaseHelper.DB_TABLE_NAME, null, null);
