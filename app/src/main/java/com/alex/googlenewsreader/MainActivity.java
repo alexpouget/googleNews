@@ -27,6 +27,7 @@ import com.alex.googlenewsreader.Notifications.MyReceiver;
 import com.alex.googlenewsreader.asyncTask.BackTask;
 import com.alex.googlenewsreader.bdd.DataBaseHelper;
 import com.alex.googlenewsreader.bdd.Database;
+import com.alex.googlenewsreader.file_manager.FileManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,16 +42,21 @@ import java.util.ArrayList;
 
 public class
         MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
-SwipeRefreshLayout mSwipeRefreshLayout;
+
+    SwipeRefreshLayout mSwipeRefreshLayout;
     ArrayList<News> actu = null;
     public static Database dbi;
     public static Boolean co = false;
-    public static String activeTag = "google";
+    public static String activeTag;
+
     MyReceiver myReceiver = new MyReceiver();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(activeTag == null || activeTag ==""){
+            activeTag = "actu";
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -80,7 +86,6 @@ SwipeRefreshLayout mSwipeRefreshLayout;
 
         Button search_button = (Button)findViewById(R.id.search_button);
 
-
         search_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final EditText recherche = (EditText)findViewById(R.id.editText);
@@ -93,6 +98,9 @@ SwipeRefreshLayout mSwipeRefreshLayout;
                             activeTag = String.valueOf(recherche.getText());
                             recherche.setVisibility(View.GONE);
                             hideSoftKeyboard(MainActivity.this);
+                            LoadNews("https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + activeTag);
+                            FileManager fm =new FileManager(v.getContext());
+                            fm.Write(activeTag);
                         }
                         return false;
                     }
@@ -118,7 +126,6 @@ SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onRefresh(){
-        activeTag = "football";
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
