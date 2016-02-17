@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GoogleNewsFev.iml" filepath="$PROJECT_DIR$/GoogleNewsFev.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GoogleNewsReader.iml" filepath="$PROJECT_DIR$/GoogleNewsReader.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

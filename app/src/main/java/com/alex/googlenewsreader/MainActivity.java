@@ -1,31 +1,25 @@
 package com.alex.googlenewsreader;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Html;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.alex.googlenewsreader.Notifications.MyReceiver;
 import com.alex.googlenewsreader.asyncTask.BackTask;
-import com.alex.googlenewsreader.bdd.DataBaseHelper;
 import com.alex.googlenewsreader.bdd.Database;
 import com.alex.googlenewsreader.file_manager.FileManager;
 
