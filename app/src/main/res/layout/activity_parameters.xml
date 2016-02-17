@@ -22,19 +22,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Choisir les tags"
+        android:text="Choisir un ancien tag :"
         android:id="@+id/textView3"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listviews_tags_params"
-        android:layout_below="@+id/textView3"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -59,4 +51,26 @@
         android:layout_marginTop="39dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <Spinner
+        android:id="@+id/spinnerOldTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="58dp"
+        android:spinnerMode="dropdown" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Appliquer tag"
+        android:id="@+id/applyTag"
+        android:layout_below="@+id/spinnerOldTags"
+        android:layout_alignRight="@+id/textView2"
+        android:layout_alignEnd="@+id/textView2"
+        android:layout_marginTop="35dp" />
+
 </RelativeLayout>
