@@ -9,6 +9,7 @@ public class News {
     String url;
     String snippet;
     String Image;
+    String date;
 
     public News() {
     }
@@ -57,5 +58,13 @@ public class News {
 
     public void setImage(String image) {
         Image = image;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

@@ -5,11 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.text.Html;
-import android.widget.Toast;
 
 import com.alex.googlenewsreader.MainActivity;
-import com.alex.googlenewsreader.News;
 
 import java.io.Serializable;
 
@@ -36,7 +33,7 @@ public class Database implements Serializable {
         }
     }
 
-    public void insert(String title,String url,String image,String snippet){
+    public void insert(String title,String url,String image,String snippet,String date){
         if(db!=null){
             ContentValues contentValues = new ContentValues();
             contentValues.put(DataBaseHelper.FIELD[0], title);
@@ -45,11 +42,12 @@ public class Database implements Serializable {
             contentValues.put(DataBaseHelper.FIELD[3], snippet);
             contentValues.put(DataBaseHelper.FIELD[4], MainActivity.activeTag);
             contentValues.put(DataBaseHelper.FIELD[5], 1);
-            long id = db.insert(DataBaseHelper.DB_TABLE_NAME,null,contentValues);
-            Toast.makeText(context, "Inserted in DB = " + id, Toast.LENGTH_SHORT).show();
+            contentValues.put(DataBaseHelper.FIELD[6], date);
+            long id = db.insert(DataBaseHelper.DB_TABLE_NAME, null, contentValues);
+            //Toast.makeText(context, "Inserted in DB = " + id, Toast.LENGTH_SHORT).show();
         }
     }
-    public void insertOrUpdate(String title,String url,String image,String snippet){
+    public void insertOrUpdate(String title,String url,String image,String snippet,String date){
         if(db!=null){
             String whereClause = DataBaseHelper.FIELD[0]+" = ?";
             String[] whereArgs = {title};
@@ -58,9 +56,9 @@ public class Database implements Serializable {
                 //cursor.moveToNext();
                 //if(cursor != null && cursor.getCount()>0 && cursor.getPosition()>=0){
                 System.out.println("update " + cursor.getLong(0));
-                update((int)cursor.getLong(0), title, url,image,snippet);
+                update((int)cursor.getLong(0), title, url,image,snippet,date);
             }else{
-                insert(title, url, image, snippet);
+                insert(title, url, image, snippet,date);
             }
         }
     }
@@ -79,20 +77,7 @@ public class Database implements Serializable {
         return false;
     }
 
-
-    public void update(String title,String url,String image,String snippet){
-        if(db!=null){
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(DataBaseHelper.FIELD[0], title);
-            contentValues.put(DataBaseHelper.FIELD[1], url);
-            contentValues.put(DataBaseHelper.FIELD[2], image);
-            contentValues.put(DataBaseHelper.FIELD[3], snippet);
-            contentValues.put(DataBaseHelper.FIELD[4], MainActivity.activeTag);
-            long nbRows = db.update(DataBaseHelper.DB_TABLE_NAME, contentValues, " _id = ? ", new String[]{"1"});
-            Toast.makeText(context, "update " + nbRows, Toast.LENGTH_SHORT).show();
-        }
-    }
-    public void update(int id,String title,String url,String image,String snippet){
+    public void update(int id,String title,String url,String image,String snippet,String date){
         if(db!=null){
             ContentValues contentValues = new ContentValues();
             String[] _id = {Integer.toString(id)};
@@ -101,8 +86,9 @@ public class Database implements Serializable {
             contentValues.put(DataBaseHelper.FIELD[2], image);
             contentValues.put(DataBaseHelper.FIELD[3], snippet);
             contentValues.put(DataBaseHelper.FIELD[4], MainActivity.activeTag);
+            contentValues.put(DataBaseHelper.FIELD[6], date);
             long nbRows = db.update(DataBaseHelper.DB_TABLE_NAME, contentValues, " _id = ? ", _id);
-            Toast.makeText(context, "update " + nbRows, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "update " + nbRows, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -120,7 +106,7 @@ public class Database implements Serializable {
     public void deleteAll(){
         if (db != null) {
             long nbRows = db.delete(DataBaseHelper.DB_TABLE_NAME, null, null);
-            Toast.makeText(context, "delete " + nbRows, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "delete " + nbRows, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -32,7 +32,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
 public class
         MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -180,9 +185,9 @@ public class
                 //news.setUrl(urlDecoded);
                 if(!obj.isNull("image")) {
                     JSONObject obj_image = new JSONObject(obj.getString("image"));
-                    dbi.insertOrUpdate(obj.getString("title"), urlDecoded, obj_image.getString("url"), obj.getString("content"));
+                    dbi.insertOrUpdate(obj.getString("title"), urlDecoded, obj_image.getString("url"), obj.getString("content"),obj.getString("publishedDate"));
                 }else{
-                    dbi.insertOrUpdate(obj.getString("title"), urlDecoded, null, obj.getString("content"));
+                    dbi.insertOrUpdate(obj.getString("title"), urlDecoded, null, obj.getString("content"),obj.getString("publishedDate"));
                 }
 
             }
@@ -217,11 +222,29 @@ public class
                 news.setTitle(String.valueOf(Html.fromHtml(cursor.getString(1))));
                 news.setSnippet(String.valueOf(Html.fromHtml(news.getTitle() + "<br>" + cursor.getString(4) + "</br>")));
                 news.setUrl(cursor.getString(2));
+                news.setDate(cursor.getString(7));
                 if(co==true) {
                     news.setImage(cursor.getString(3));
                 }
-                System.out.println(" ligne : " + cursor.getString(1) + "active : " + cursor.getString(6) + " tag : " + cursor.getString(5));
+                //System.out.println(" ligne : " + cursor.getString(1) + "active : " + cursor.getString(6) + " tag : " + cursor.getString(5));
                 actu.add(news);
+                Collections.sort(actu,new Comparator<News>(){
+                    @Override
+                    public int compare(News lhs, News rhs) {
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+                        try {
+                            Date date1 = formatter.parse(lhs.getDate());
+                            System.out.println(formatter.format(date1));
+                            Date date2 = formatter.parse(rhs.getDate());
+                            System.out.println(formatter.format(date2));
+                            return date1.compareTo(date2);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        return 0;
+                    }
+                });
+
             }
         }
 
