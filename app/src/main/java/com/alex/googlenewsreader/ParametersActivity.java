@@ -40,6 +40,7 @@ public class ParametersActivity extends AppCompatActivity {
                 MainActivity.dbi.deleteAll();
                 System.out.println("Nb news apres suppression: " + MainActivity.dbi.getNbNews());
                 // on relance la main activity
+                Toast.makeText(ParametersActivity.this, "News supprimées", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
         });
@@ -50,7 +51,7 @@ public class ParametersActivity extends AppCompatActivity {
                 Intent intent = new Intent(ParametersActivity.this, MainActivity.class);
 
                 // Nb de news activées avant réactivation
-                System.out.println("Nb news avant reactivation: "+MainActivity.dbi.getNbNewsActivated());
+                System.out.println("Nb news avant reactivation: " + MainActivity.dbi.getNbNewsActivated());
 
                 // Réaction de toutes les news de la bdd
                 MainActivity.dbi.reactivateAllNews();
@@ -58,6 +59,7 @@ public class ParametersActivity extends AppCompatActivity {
                 // Nb de news activées apres réactivation
                 System.out.println("Nb news apres reactivation: " + MainActivity.dbi.getNbNewsActivated());
 
+                Toast.makeText(ParametersActivity.this, "News réactivée(s)", Toast.LENGTH_SHORT).show();
                 // on relance la main activity
                 startActivity(intent);
             }
