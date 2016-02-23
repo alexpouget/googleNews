@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.alex.googlenewsreader.Notifications.MyReceiver;
 import com.alex.googlenewsreader.asyncTask.BackTask;
@@ -47,6 +48,7 @@ public class
     public static Database dbi;
     public static Boolean co = false;
     public static String activeTag;
+    public static int numNews = 0;
 
     MyReceiver myReceiver = new MyReceiver();
 
@@ -64,8 +66,7 @@ public class
         }
         registerReceiver(myReceiver, new IntentFilter("N3W5"));
         dbi = new Database(this);
-        BackTask backTask = new BackTask(this,dbi);
-        backTask.execute();
+
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -81,6 +82,8 @@ public class
             getAllNews();
             MyAdapter arrayActu = new MyAdapter(this, actu);
             lv.setAdapter(arrayActu);
+            BackTask backTask = new BackTask(this,dbi);
+            backTask.execute();
         }
 
         Button search_button = (Button)findViewById(R.id.search_button);
@@ -137,7 +140,7 @@ public class
 
     public void LoadNews(String myurl){
 
-
+        numNews = 0;
         ListView lv = (ListView)findViewById(R.id.listView);
         lv.setOnItemClickListener(new MyOnItemClickListener());
         lv.setOnItemLongClickListener(new MyOnItemClickListener());
@@ -173,7 +176,7 @@ public class
             for (int i = 0; i < array.length(); i++) {
                 // On récupère un objet JSON du tableau
                 JSONObject obj = new JSONObject(array.getString(i));
-
+                numNews++;
                 // on instancie la classe news
                 //News news = new News();
 
@@ -204,6 +207,7 @@ public class
 
         MyAdapter arrayActu = new MyAdapter(this, actu);
         lv.setAdapter(arrayActu);
+        Toast.makeText(this,numNews+" loaded",Toast.LENGTH_LONG).show();
     }
 
 
